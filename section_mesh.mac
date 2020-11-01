@@ -1,0 +1,78 @@
+finish
+/clear
+/prep7     !祖传开头
+
+et,1,plane82
+~satin,test,sat,D:\Ansys\,all    !将sat文件导入ansys
+
+mshape,0,2D     !ANSYS中网格划分形状源的控制命令。
+!语句为：MSHAPE，KEY，Dimension
+!其中KEY用于设定单元的形状，
+!如果为0，则说明对于2D网格使用四边形单元，对于3D网格使用六面体单元;
+!如果为1，则说明对于2D网格使用三角形单元，对于3D网格使用四面体单元。
+
+mshkey,2    !网格划分方式的控制
+!语句为：MSHKEY，KEY
+!KEY项设定网格划分方式的控制项，如果为0，则说明用自由网格划分方式;
+!如果为1，则说明使用映射网格划分;
+!如果为2，则说明自由网格划分和映射网格划分混合使用。
+
+!通常MSHAPE命令和MSHKEY命令配合使用，
+!前者说明网格划分的形状，后者说明网格的方式。
+
+esize,0.1     !网格尺寸的控制
+!网格尺寸的控制最简便的方式 是通过定义总体单元连长或单元划分数目来实现，
+!通常使用的命令是ESIZE，
+!语句为：ESIZE，SIZE，NDIV
+!SIZE：控制单元边界的尺寸
+!NDIV: 控制单元划分数目
+
+!除了以上调整单元边界尺寸的ESIZE命令外，
+!类似的控制网格尺寸的命令还有KESIZE、LESIZE等
+!KESIZE命令通过定义关键点附近单元尺寸来控制网格划分密度，格式如下：
+!语句：KESIZE，NPT，SIZE，FACT1，FACT2
+!NPT：指定关键点编号，
+!SIZE：控制关键点附近的单元的边界尺寸
+!FACT1/FACT2：设定单元尺寸的比率
+
+!LESIZE命令是通过定义线上单元数目来控制网格划分密度，格式如下：
+!语句：LESIZE，NL1，SIZE，ANGSIZ，NDIV，SPACE，KFORC，LAYER1，LAYER2，KYNDIV
+!NL1：   指定线的编号。
+!SIZE：  控制单元边界的尺寸。
+!ANGSIZ：控制单元边界的弧度。
+!NDIV：  控制线的划分数目。
+!SPACE： 控制分段的比率。
+
+!如果使用自由网格划分方式，一般推荐使用智能网格划分的模式，
+!此时就要经常用到SMART命令，格式如下：
+!语句：SMART，SIZE，SIZLVL，FAC，EXPND，TRANS，ANGL，ANGH，GRATIO，SMHLC，SMANC，MXITR，SPRX
+!较为常用的控制项即为SIZLVL项，
+!该项控制网格划分的粗细等级，有1~10级可供选择，数值越小，网格越细。
+
+amesh,all   !给面Area划分网格；lmesh，给line划分网格
+
+secwrite,xiangliang,sect,,1
+!在工作目录下创建网格文件.sect,自定义名字
+
+sectype,1,beam,mesh   ! 定义一个截面号，并定义该截面类型；建立断面编号与断面类型信息之间的联系
+!语句： sectype, id, type, subtype ,name ,refinekey
+!sectype,截面号1，type beam定义此截面用于梁， subtype mesh用户定义的划分网络
+
+secoffset,cent   !梁截面的偏移命令
+!语句：secoffset, location, offsety, offsetz, CG-Y, CG-Z, SH-Y, SH-Z
+!location可以分为cent,shrc,origin,user四种类型
+!省缺：cent，即梁单元的节点位置位于梁截面的中心
+!Shrc是指梁单元的节点位置位于梁截面的剪心  剪心：剪力不对引起截面扭转
+!Origin是指将梁单元的节点位置移动到截面的节点坐标系的原点位置，
+!User是指根据操作者的自定义，实现偏移
+!同样offsety和offsetz也是根据梁的方向和右手笛卡尔准则，判断出节点坐标系方向即可进行偏移
+
+secread,xiangliang,sect,,mesh  
+!在工作目录里面读取用户自定义的网格文件 xiangliang.sect
+ 
+asel,all
+aclear,all
+adele,all,,,1 
+
+secplot,1,0  
+!绘制梁的几何外形，0表示不显示断面网络   

@@ -1,0 +1,94 @@
+fini
+/SOLU   
+
+ANTYPE,0            !静力分析
+!antype,指定分析类型和重启状态
+!0静态
+!1屈曲
+!2模态
+!3谐波  等等
+
+!NLGEOM,on          !!!几何大变形
+
+NROPT,AUTO, ,OFF   !!
+!NROPT, Option1, Option2, Optval
+!Newton-Raphson在静态或完整瞬态分析中指定Newton-Raphson选项
+!Option1:auto,         full,     modi,       init,                         unsym
+!Option1:程序自动选择，完整的NR，修改后的NR，用先前计算的矩阵（初始刚度），完整的NR与非对称矩阵一同使用
+!Option2:crpl/blank,与静态蠕变有关
+!Optval:crpl->crlimit俺也没看懂；blank->on使用自适应下降(adaptive descent)/off不使用，默认
+
+LUMPM,0 
+!LUMPM, Key, --, KeyElt，指定集中质量矩阵公式 lumped mass matrix
+!0，默认
+
+EQSLV, , ,0,
+!EQSLV, Lab, TOLER, MULT, --, KeepFile,指定方程式求解器的类型
+!选择一种求解器，比如稀疏等方法，没看懂，这里直接空出，应该是选择了默认方法
+
+PRECISION,0 
+!未查询到此命令，但执行后，output window返回“Use Double Precision for PCG/JCG solver”
+
+MSAVE,0 
+!MSAVE, Key,设置求解器内存保存选项,此选项仅适用于PCG求解器（包括PCG Lanczos）。
+!0,对整个模型的刚度矩阵使用全局装配；1，节约内存的方法；并不明白这是什么意思
+
+PIVCHECK,1  
+!PIVCHECK, KEY, PRNTCNTRL,遇到负或零方程求解器枢轴值时，控制分析的行为.并不能看懂
+
+SSTIF,ON              !悬索桥 开
+!在非线性分析中激活应力刚度效果。
+!PSTRES,ON            !斜拉桥 开
+!http://blog.sina.com.cn/s/blog_777a77970101gd6n.html
+!PSTRES
+!    Solve [K]x = F
+!    Calculate and store [Ks]
+!    (this means that "x" is solved for based on [K] only)
+!
+!SSTIF
+!    Solve [K]*x = F
+!    Calculate and store [Ks]
+!    Solve [K+Ks]*x=F
+!    iterate until force equilibrium is satisfied
+!    (this means that "x" and corresponding stresses are based on updated [K+Ks])
+!
+!由上面解释，可以很明显看出PSTRES与SSTIF的本质区别是PSTRES为线性求解，
+!而SSTIF意味着非线性求解。
+
+!http://blog.sina.com.cn/s/blog_6de8f8650102xklj.html
+
+TOFFST,1
+!TOFFST, VALUE,指定从绝对零到零的温度偏移,这是啥玩意？
+
+acel,,9.81
+!ACEL, ACEL_X, ACEL_Y, ACEL_Z,指定用于分析的全局笛卡尔参考系的线性加速度
+
+solve
+
+!jingli
+!adjustcable
+!jingli
+!adjustcable
+!jingli
+!adjustcable
+!jingli
+!adjustcable
+!jingli
+!adjustcable
+!jingli
+!adjustcable
+!jingli
+!
+!fini
+!/post1
+!/eshape,0
+!/DSCALE,ALL,AUTO
+!/EFACET,1
+!PLNSOL, U,Y, 0,1.0
+
+
+/POST1  
+PLDISP,0
+/AUTO,1 
+/REP,FAST   
+!fini
